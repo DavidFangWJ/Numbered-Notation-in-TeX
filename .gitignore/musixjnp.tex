@@ -1,0 +1,340 @@
+\makeatletter
+
+%11 点 (实际为 10.95 pt) 字体修正
+%2018-06-20
+\font\elevenrm=cmr10 scaled \magstephalf %原代码字号为 9 × 1.095 = 9.855
+\font\elevenbf=cmbx10 scaled \magstephalf
+\font\elevenit=cmti10 scaled \magstephalf
+\font\elevenbi=cmbxti10 scaled \magstephalf
+\font\elevensc=cmcsc10 scaled \magstephalf
+
+%简谱字体 (可与文本字体类比)
+%已经改变了大小，不改名字是因为我懒
+\font\jpeight=jpfont at 8pt
+\font\jpten=jpfont at 10pt
+\font\jptwelve=jpfont at 12pt
+\font\jpfrt=jpfont
+\font\jpsvt=jpfont scaled \magstep1
+\font\jptwty=jpfont scaled \magstep2
+
+%重写 MusixTeX 字体调用心尺寸计算 (去除西欧中世纪音乐字体, 因不和简谱混排)
+%2018-06-20
+\newdimen\jpsiz@
+\newdimen\jp@xshift
+\newdimen\jp@yshift
+\newdimen\ulin@dist
+
+\newif\ifc@ntinu@
+\c@ntinu@false
+
+\let\jpnorfont\jpfrt
+\let\jpfont\jpnorfont
+
+\def\set@Largenotesize{\let\musixfont\musicLargefont
+  \let\jpfont\jpLargefont
+  \b@amthick.3456\Interligne \interbeam1.08\Interligne }
+
+\def\set@largenotesize{\let\musixfont\musiclargefont
+  \let\jpfont\jplargefont
+  \b@amthick.288\Interligne \interbeam.9\Interligne }
+
+\def\set@normalnotesize{\let\musixfont\musicnorfont
+  \let\jpfont\jpnorfont
+  \b@amthick.24\Interligne \interbeam\p@seven5\Interligne }
+
+\def\set@smallnotesize{\let\musixfont\musicsmallfont
+  \let\jpfont\jpsmallfont
+  \b@amthick\p@ne92\Interligne \interbeam.6\Interligne }
+
+\def\set@tinynotesize{\let\musixfont\musictinyfont
+  \let\jpfont\jptinyfont
+  \b@amthick\p@ne536\Interligne \interbeam.48\Interligne }
+
+\def\comput@fonts{%    
+  \ifnum\musicsize=\sixt@@n
+    \let\musicLargefont\musictwentyfour
+    \let\musiclargefont\musictwenty
+    \let\musicnorfont\musicsixteen
+    \let\musicsmallfont\musicthirteen
+    \let\musictinyfont\musiceleven
+    \let\jpLargefont\jpsvt
+    \let\jplargefont\jpfrt
+    \let\jpnorfont\jptwelve
+    \let\jpsmallfont\jpten
+    \let\jptinyfont\jpeight
+    \let\slurd\slurdsixteen \let\sluru\slurusixteen
+    \let\hslurd\hslurdsixteen \let\hsluru\hslurusixteen
+    \let\meternorfont\tenbf \let\metersmallfont\eightbf  % version 1.16  RDT
+    \let\meterbigfont\twelvebf \let\meterlargefont\frtbf
+    \let\meterLargefont\svtbf
+    \let\tinyppff\ppfftwelve   % version 1.17  RDT
+    \let\smallppff\ppfftwelve
+    \let\normppff\ppffsixteen
+    \let\medppff\ppfftwenty
+    \def\txtfont{\ifdim\internote<.95\Internote \tinytype\it  % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \smalltype\it
+    \else\ifdim\internote<1.43\Internote \Smalltype\it
+    \else\normtype\it\fi\fi\fi}%
+  \else\ifnum\musicsize=\@xxiv
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentynine
+    \let\musicnorfont\musictwentyfour
+    \let\musicsmallfont\musictwenty
+    \let\musictinyfont\musicsixteen
+    \let\jpLargefont\jptwty
+    \let\jplargefont\jptwty
+    \let\jpnorfont\jpsvt
+    \let\jpsmallfont\jpfrt
+    \let\jptinyfont\jptwelve
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\meternorfont\frtbf \let\metersmallfont\twelvebf % version 1.18  RDT
+    \let\meterbigfont\svtbf \let\meterlargefont\twtybf
+    \let\meterlargefont\twfvbf
+    \let\tinyppff\ppffsixteen  
+    \let\smallppff\ppfftwenty
+    \let\normppff\ppfftwentyfour
+    \let\medppff\ppfftwentynine
+    \def\txtfont{\ifdim\internote<.95\Internote \smalltype\it % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \Smalltype\it
+    \else\ifdim\internote<1.43\Internote \normtype\it
+    \else\medtype\it\fi\fi\fi}%
+  \else\ifnum\musicsize=\@xxix
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentynine
+    \let\musicnorfont\musictwentynine
+    \let\musicsmallfont\musictwentyfour
+    \let\musictinyfont\musictwenty
+    \let\jpLargefont\jptwty
+    \let\jplargefont\jptwty
+    \let\jpnorfont\jptwty
+    \let\jpsmallfont\jpsvt
+    \let\jptinyfont\jpfrt
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\slurud\slurutwentyd \let\slurdd\slurdtwentyd %    +ickd
+    \let\hslurud\hslurutwentyd \let\hslurdd\hslurdtwentyd %+ickd
+    \let\meternorfont\svtbf \let\metersmallfont\frtbf     % version 1.18  RDT
+    \let\meterbigfont\twtybf \let\meterlargefont\twfvbf   % version 1.24 typos corrected
+    \let\meterLargefont\twfvbf
+    \let\tinyppff\ppfftwenty   
+    \let\smallppff\ppfftwentyfour
+    \let\normppff\ppfftwentynine
+    \let\medppff\ppfftwentynine
+    \def\txtfont{\ifdim\internote<.95\Internote \normtype\it  % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \medtype\it
+    \else\ifdim\internote<1.43\Internote \bigfont\it
+    \else\Bigfont\it\fi\fi\fi}%
+\else
+    \ifnum\musicsize=\tw@nty
+    \else\ifnum\musicsize=\z@
+         \else\errmessage{\noexpand\musicsize=\the\musicsize\space not supported,
+           set to default of 20}%
+         \fi
+    \fi\musicsize\tw@nty
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentyfour
+    \let\musicnorfont\musictwenty
+    \let\musicsmallfont\musicsixteen
+    \let\musictinyfont\musicthirteen
+    \let\jplargefont\jpsvt
+    \let\jpLargefont\jptwty
+    \let\jpnorfont\jpfrt
+    \let\jpsmallfont\jptwelve
+    \let\jptinyfont\jpten
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\meternorfont\twelvebf \let\metersmallfont\tenbf   % version 1.18  RDT
+    \let\meterbigfont\frtbf \let\meterlargefont\svtbf
+    \let\meterLargefont\twtybf
+    \let\tinyppff\ppfftwelve  
+    \let\smallppff\ppffsixteen
+    \let\normppff\ppfftwenty
+    \let\medppff\ppfftwentyfour
+    \def\txtfont{\ifdim\internote<.95\Internote \smalltype\it
+    \else\ifdim\internote<1.19\Internote \Smalltype\it
+    \else\ifdim\internote<1.43\Internote \normtype\it
+    \else\medtype\it\fi\fi\fi}%
+\fi\fi\fi}
+
+\def\comput@sizes{%
+  \Interligne\fontdimen\fiv@\musicnorfont
+  \Internote\h@lf\Interligne \big@spc.6\Interligne
+  \qn@width\fontdimen\si@\musixfont
+  \wn@width1\qu@rt\qn@width
+  \txt@ff\h@lf\qn@width
+  \qd@skip\qn@width\advance\qd@skip-\hlthick
+  % 新增部分
+  \jpsiz@\tw@\fontdimen\si@\jpfont
+  \jp@xshift\fontdimen\si@\jpfont
+  \advance\jp@xshift-\fontdimen\si@\musicnorfont
+  \divide\jp@xshift\tw@
+  \jp@yshift\tw@\fontdimen\fiv@\musixfont
+  \advance\jp@yshift-\p@seven\fontdimen\fiv@\jpfont
+  \ulin@dist.2\fontdimen\fiv@\jpfont}
+
+%修正 0 线 (简谱用) 的情况
+\def\C@Inter{%  RDT: corrected to work if \nblines > 6   (version 1.23)
+  \stem@skip\interportee
+  \ifnum\nblines=\thr@@
+    \advance\stem@skip-\@ight\internote
+  \else\ifnum\nblines=\z@
+    \advance\stem@skip-\@ight\internote
+  \else
+    \advance\stem@skip-\nblines\internote
+    \advance\stem@skip-\nblines\internote
+    \advance\stem@skip\tw@\internote
+  \fi\fi}
+
+\def\jpchar{\jpfont\char}
+
+\def\jxgetn@i#1\relax{\n@viii\z@ \n@i\maxdimen \n@ii\z@% \n@iii\z@%最大宽度
+  \edef\t@ruc{\expandafter\f@tok #1\relax\af@tok}%
+  \edef\s@uite{\s@tok #1\empty\af@tok}%
+%% pas lettre
+  \ifcat a\t@ruc \n@i\expandafter`\t@ruc\relax
+%%先把 \n@i 变成“距离中音 1 的值”
+    \ifnum\n@i=82 \n@i48%大写字母 R 表示休止
+	\else\ifnum\n@i=88
+	\else\ifnum\n@i=90 \n@i45
+	  \else\ifnum\n@i>96\advance\n@i-99%小写字母, c 是中音 1
+	  \else\advance\n@i-81%让 C 对应 -14
+	  \fi
+	  %低音区, 往下递减
+      \loop \ifnum\n@i<\z@ \advance\n@i\s@v@n \advance\n@ii\m@ne
+      \repeat
+	  %高音区, 往上递增
+      \loop \ifnum\n@i>\si@ \advance\n@i-\s@v@n \advance\n@ii\@ne
+      \repeat
+	  \advance\n@i49%\n@i 的 0 表示音符“1”, 即编码49
+	  \ifnum\n@ii<\z@ \multiply\n@ii-1 \advance\n@ii\thr@@%低音点的码位
+	\fi\fi\fi\fi
+    \edef\ss@uite{\noexpand\n@fon{\s@uite}}%
+%%此处暂时没有改写, 一定有 bug, 不要用
+  \else
+    \ifnum\n@i=45 \edef\ss@uite{\noexpand\n@fon{\s@uite}}%
+	\else
+      \let\ss@uite\empty
+      \let\alt@suite\empty
+    %\ifcat 1\t@ruc
+    %  \if =\t@ruc \let\@TI\na  \C@GET \fi
+    %  \if *\t@ruc \sk \C@Get \fi
+    %  \if .\t@ruc \let\@TI\pt   \C@GET \fi
+    %  \if >\t@ruc \let\@TI\dsh \C@GET \fi
+    %  \if <\t@ruc \let\@TI\dfl \C@GET \fi
+    %  \if !\t@ruc \transpose\normaltranspose \C@Get \fi  
+    %  \if '\t@ruc \advance\transpose\s@v@n   \C@Get \fi  
+    %  \if `\t@ruc \advance\transpose-\s@v@n  \C@Get \fi
+    %  \ifnum\n@viii<\maxdimen \n@i#1\fi
+    %\else
+    %  \if ^\t@ruc \let\@TI\sh \C@GET \fi
+    %  \if _\t@ruc \let\@TI\fl \C@GET \fi
+    %\fi\alt@suite
+  \fi\fi}
+
+\def\sadv@box#1{\hbox\@to\noteskip{\kernm\jp@xshift#1\hss}\advance\locx@skip\noteskip}
+\def\s@hbox#1{\hbox\@to\noteskip{\kernm\jp@xshift#1\kern\jp@xshift\hss}}
+
+%%画单条减时线
+\def\dr@wsingulin@{\y@ii\n@vii\ulin@dist%这个数是正数, 因此以向下为正
+  \advance\y@ii-\jp@yshift
+  \y@iii\y@ii
+  \advance\y@ii-\hlthick%往上
+  \advance\y@iii\hlthick%往下
+  \y@iv\h@lf\jpsiz@
+  \ifcase\n@pt \y@iv\h@lf\jpsiz@ \or \y@iv\jpsiz@ \or \y@iv\@ne\h@lf\jpsiz@ \fi
+  \ifc@ntinu@ \y@iv\noteskip \fi
+  \vrule\@height-\y@ii\@depth\y@iii\@width\y@iv
+  \kernm\y@iv}
+
+%%画减时线及上下加点
+\def\dr@wadd{\y@v\jp@yshift
+  \ifnum\n@ii>\thr@@ \advance\y@v-\n@vii\ulin@dist \fi% 是低音, 可能需要向下
+  \ifnum\n@ii>\z@ \raise\y@v\hbox{\jpchar\n@ii}\fi
+  \ifx\n@wline\relax
+    \loop\ifnum\n@vii>\z@
+      \dr@wsingulin@ \advance\n@vii\m@ne
+    \repeat
+  \else \c@ntinu@false
+    \loop\ifnum\n@vii>\z@
+      \dr@wsingulin@ \advance\n@vii\m@ne
+	  \ifnum\n@vii=\n@wline \c@ntinu@true \let\n@line\n@wline \fi
+    \repeat \let\n@wline\relax
+  \fi}
+
+\def\jgetn@i{\jxgetn@i}
+%音符书写
+\def\jw@n{\kernm\jp@xshift
+  \ifnum\n@i<\@c
+    \n@vii\n@line
+%原本这块用于加线, 现在改为减时线
+    \dr@wadd
+	\raise\jp@yshift\adv@box\n@sym% \else \raise\ulin@dist\hbox{\n@sym}\fi
+    \ss@uite% \advancetrue
+  \fi \kern\jp@xshift}
+%分析输入
+\def\jg@n#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@n \let\n@sym\j@n \jw@n}
+\def\jg@np#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@np \let\n@sym\j@np \jw@n}
+\def\jg@npp#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@npp \let\n@sym\j@npp \jw@n}
+
+\def\jfrac#1#2{\setbox\toks@box\vbox{\hbox{\ \meterfont#1}%
+  \hbox{\ \meterfont #2}}\kernm\h@lf\jpsiz@\vbox\@to\@ight\internote{\offinterlineskip
+  \vss\hbox\@to\wd\toks@box{\hss\meterfont#1\hss}\vss
+  \vbox\@to0.4pt{\hrule\@width\wd\toks@box}\vss
+  \hbox\@to\wd\toks@box{\hss\meterfont#2\hss}\vss}\kern\h@lf\jpsiz@}
+
+\def\j@n{\jpchar\n@i}
+\def\j@np{\jpchar\n@i.}
+\def\j@npp{\let\n@pt\tw@ \jpchar\n@i\char1}
+
+%正式输入的命令
+\def\jq{\let\n@line\z@ \let\n@pt\z@ \jg@n}
+\def\jc{\let\n@line\@ne \let\n@pt\z@ \jg@n}
+\def\jcc{\let\n@line\tw@ \let\n@pt\z@ \jg@n}
+\def\jccc{\let\n@line\thr@@ \let\n@pt\z@ \jg@n}
+\def\jcccc{\let\n@line\f@ur \let\n@pt\z@ \jg@n}
+
+\def\jqp{\let\n@line\z@ \let\n@pt\@ne \jg@np}
+\def\jcp{\let\n@line\@ne \let\n@pt\@ne \jg@np}
+\def\jccp{\let\n@line\tw@ \let\n@pt\@ne \jg@np}
+\def\jcccp{\let\n@line\thr@@ \let\n@pt\@ne \jg@np}
+\def\jccccp{\let\n@line\f@ur \let\n@pt\@ne \jg@np}
+
+\def\jqpp{\let\n@line\z@ \let\n@pt\tw@ \jg@npp}
+\def\jcpp{\let\n@line\@ne \let\n@pt\tw@ \jg@npp}
+\def\jccpp{\let\n@line\tw@ \let\n@pt\tw@ \jg@npp}
+\def\jcccpp{\let\n@line\thr@@ \let\n@pt\tw@ \jg@npp}
+\def\jccccpp{\let\n@line\f@ur \let\n@pt\tw@ \jg@npp}
+
+%用于连接下划线的情况
+\def\iul{\c@ntinu@true \let\n@line\@ne}
+\def\iuul{\c@ntinu@true \let\n@line\tw@}
+\def\iuuul{\c@ntinu@true \let\n@line\thr@@}
+\def\iuuuul{\c@ntinu@true \let\n@line\f@ur}
+
+\def\tul{\let\n@wline\relax \c@ntinu@false}
+\def\tuul{\let\n@line\tw@ \let\n@wline\@ne}
+\def\tuuul{\let\n@line\thr@@ \let\n@wline\tw@}
+\def\tuuuul{\let\n@line\f@ur \let\n@wline\thr@@}
+
+\def\jn{\let\n@pt\z@ \jg@n}
+\def\jnp{\let\n@pt\@ne \jg@np}
+\def\jnpp{\let\n@pt\tw@ \jg@npp}
+
+%简化输入
+\def\tjn{\tul\jn}
+\def\tjnp{\tul\jnp}
+\def\tjnpp{\tul\jnpp}
+
+\def\Djul#1#2{\iul\jn#1\tjn#2}
+\def\Djuul#1#2{\iuul\jn#1\tjn#2}
+
+%简谱调号
+\def\jpkey#1#2{{\lyricsoff\hbox\@to.5em{\jpten #1\hss} = #2\lyricson}}
+
+\let\n@wline\relax
+\makeatother
+\endinput
