@@ -1,1 +1,821 @@
-/usr/share/texmf/tex/generic/musixjnp/musixjnp.tex
+\ifx\undefined\startpiece \input musixtex \fi
+
+\ifx\undefined\jfrac \else \endinput \fi
+\makeatletter
+
+%11 点 (实际为 10.95 pt) 字体修正
+%2018-06-20
+\font\elevenrm=cmr10 scaled \magstephalf %原代码字号为 9 × 1.095 = 9.855
+\font\elevenbf=cmbx10 scaled \magstephalf
+\font\elevenit=cmti10 scaled \magstephalf
+\font\elevenbi=cmbxti10 scaled \magstephalf
+\font\elevensc=cmcsc10 scaled \magstephalf
+
+%简谱字体 (可与文本字体类比)
+\font\jpeight=jpfont at 8pt
+\font\jpten=jpfont at 10pt
+\font\jptwelve=jpfont at 12pt
+\font\jpfrt=jpfont at 14.4pt
+\font\jpsvt=jpfont at 17.28pt
+\font\jptwty=jpfont at 20.74pt
+% 连线字体
+\font\jsltwty=jsl20
+
+%重写 MusixTeX 字体调用心尺寸计算 (去除西欧中世纪音乐字体, 因不和简谱混排)
+%2018-06-20
+%\newcount\n@pt % 修正0符点情况
+\newcount\not@type
+\not@type\z@
+\newdimen\jpsiz@
+\newdimen\jp@xshift
+\newdimen\jp@yshift
+\newdimen\smallnot@shift
+\newdimen\jpch@rwidth
+\newdimen\jpgrac@width
+\newdimen\ulin@dist
+
+\newif\iffl@t
+\fl@tfalse
+
+\let\jpnorfont\jpfrt
+
+\def\set@Largenotesize{\let\musixfont\musicLargefont
+  \let\xgregfont\xgregLargefont \let\jpfont\jpLargefont
+  \b@amthick.3456\Interligne \interbeam1.08\Interligne }
+
+\def\set@largenotesize{\let\musixfont\musiclargefont
+  \let\xgregfont\xgreglargefont \let\jpfont\jplargefont
+  \b@amthick.288\Interligne \interbeam.9\Interligne }
+
+\def\set@normalnotesize{\let\musixfont\musicnorfont
+  \let\xgregfont\xgregnorfont \let\jpfont\jpnorfont
+  \b@amthick.24\Interligne \interbeam\p@seven5\Interligne }
+
+\def\set@smallnotesize{\let\musixfont\musicsmallfont
+  \let\xgregfont\xgregsmallfont \let\jpfont\jpsmallfont
+  \b@amthick\p@ne92\Interligne \interbeam.6\Interligne }
+
+\def\set@tinynotesize{\let\musixfont\musictinyfont
+  \let\xgregfont\xgregtinyfont \let\jpfont\jptinyfont
+  \b@amthick\p@ne536\Interligne \interbeam.48\Interligne }
+
+\def\comput@fonts{%    
+  \ifnum\musicsize=\sixt@@n
+    \let\musicLargefont\musictwentyfour
+    \let\musiclargefont\musictwenty
+    \let\musicnorfont\musicsixteen
+    \let\musicsmallfont\musicthirteen
+    \let\musictinyfont\musiceleven
+    \let\xgregLargefont\xgregtwentyfour
+    \let\xgreglargefont\xgregtwenty
+    \let\xgregnorfont\xgregsixteen
+    \let\xgregsmallfont\xgregthirteen
+    \let\xgregtinyfont\xgregeleven
+    \let\jpLargefont\jpsvt
+    \let\jplargefont\jpfrt
+    \let\jpnorfont\jptwelve
+    \let\jpsmallfont\jpten
+    \let\jptinyfont\jpeight
+    \let\slurd\slurdsixteen \let\sluru\slurusixteen
+    \let\hslurd\hslurdsixteen \let\hsluru\hslurusixteen
+    \let\meternorfont\tenbf \let\metersmallfont\eightbf  % version 1.16  RDT
+    \let\meterbigfont\twelvebf \let\meterlargefont\frtbf
+    \let\meterLargefont\svtbf
+    \let\tinyppff\ppfftwelve   % version 1.17  RDT
+    \let\smallppff\ppfftwelve
+    \let\normppff\ppffsixteen
+    \let\medppff\ppfftwenty
+    \def\txtfont{\ifdim\internote<.95\Internote \tinytype\it  % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \smalltype\it
+    \else\ifdim\internote<1.43\Internote \Smalltype\it
+    \else\normtype\it\fi\fi\fi}%
+  \else\ifnum\musicsize=\@xxiv
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentynine
+    \let\musicnorfont\musictwentyfour
+    \let\musicsmallfont\musictwenty
+    \let\musictinyfont\musicsixteen
+    \let\xgregLargefont\xgregtwentynine
+    \let\xgreglargefont\xgregtwentynine
+    \let\xgregnorfont\xgregtwentyfour
+    \let\xgregsmallfont\xgregtwenty
+    \let\xgregtinyfont\xgregsixteen
+    \let\jpLargefont\jptwty
+    \let\jplargefont\jptwty
+    \let\jpnorfont\jpsvt
+    \let\jpsmallfont\jpfrt
+    \let\jptinyfont\jptwelve
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\meternorfont\frtbf \let\metersmallfont\twelvebf % version 1.18  RDT
+    \let\meterbigfont\svtbf \let\meterlargefont\twtybf
+    \let\meterlargefont\twfvbf
+    \let\tinyppff\ppffsixteen  
+    \let\smallppff\ppfftwenty
+    \let\normppff\ppfftwentyfour
+    \let\medppff\ppfftwentynine
+    \def\txtfont{\ifdim\internote<.95\Internote \smalltype\it % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \Smalltype\it
+    \else\ifdim\internote<1.43\Internote \normtype\it
+    \else\medtype\it\fi\fi\fi}%
+  \else\ifnum\musicsize=\@xxix
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentynine
+    \let\musicnorfont\musictwentynine
+    \let\musicsmallfont\musictwentyfour
+    \let\musictinyfont\musictwenty
+    \let\xgregLargefont\xgregtwentynine
+    \let\xgreglargefont\xgregtwentynine
+    \let\xgregnorfont\xgregtwentynine
+    \let\xgregsmallfont\xgregtwentyfour
+    \let\xgregtinyfont\xgregtwenty
+    \let\jpLargefont\jptwty
+    \let\jplargefont\jptwty
+    \let\jpnorfont\jptwty
+    \let\jpsmallfont\jpsvt
+    \let\jptinyfont\jpfrt
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\slurud\slurutwentyd \let\slurdd\slurdtwentyd %    +ickd
+    \let\hslurud\hslurutwentyd \let\hslurdd\hslurdtwentyd %+ickd
+    \let\meternorfont\svtbf \let\metersmallfont\frtbf     % version 1.18  RDT
+    \let\meterbigfont\twtybf \let\meterlargefont\twfvbf   % version 1.24 typos corrected
+    \let\meterLargefont\twfvbf
+    \let\tinyppff\ppfftwenty   
+    \let\smallppff\ppfftwentyfour
+    \let\normppff\ppfftwentynine
+    \let\medppff\ppfftwentynine
+    \def\txtfont{\ifdim\internote<.95\Internote \normtype\it  % version 1.22 RDT
+    \else\ifdim\internote<1.19\Internote \medtype\it
+    \else\ifdim\internote<1.43\Internote \bigfont\it
+    \else\Bigfont\it\fi\fi\fi}%
+\else
+    \ifnum\musicsize=\tw@nty
+    \else\ifnum\musicsize=\z@
+         \else\errmessage{\noexpand\musicsize=\the\musicsize\space not supported,
+           set to default of 20}%
+         \fi
+    \fi\musicsize\tw@nty
+    \let\musicLargefont\musictwentynine
+    \let\musiclargefont\musictwentyfour
+    \let\musicnorfont\musictwenty
+    \let\musicsmallfont\musicsixteen
+    \let\musictinyfont\musicthirteen
+    \let\xgreglargefont\xgregtwentyfour
+    \let\xgregLargefont\xgregtwentynine
+    \let\xgregnorfont\xgregtwenty
+    \let\xgregsmallfont\xgregsixteen
+    \let\xgregtinyfont\xgregthirteen
+    \let\jplargefont\jpsvt
+    \let\jpLargefont\jptwty
+    \let\jpnorfont\jpfrt
+    \let\jpsmallfont\jptwelve
+    \let\jptinyfont\jpten
+    \let\sluru\slurutwenty \let\slurd\slurdtwenty
+    \let\hsluru\hslurutwenty \let\hslurd\hslurdtwenty
+    \let\meternorfont\twelvebf \let\metersmallfont\tenbf   % version 1.18  RDT
+    \let\meterbigfont\frtbf \let\meterlargefont\svtbf
+    \let\meterLargefont\twtybf
+    \let\tinyppff\ppfftwelve  
+    \let\smallppff\ppffsixteen
+    \let\normppff\ppfftwenty
+    \let\medppff\ppfftwentyfour
+    \def\txtfont{\ifdim\internote<.95\Internote \smalltype\it
+    \else\ifdim\internote<1.19\Internote \Smalltype\it
+    \else\ifdim\internote<1.43\Internote \normtype\it
+    \else\medtype\it\fi\fi\fi}%
+\fi\fi\fi}%
+
+\def\comput@sizes{%
+  \Interligne\fontdimen\fiv@\musicnorfont
+  \Internote\h@lf\Interligne \big@spc.6\Interligne
+  \qn@width\fontdimen\si@\musixfont
+  \wn@width1\qu@rt\qn@width
+  \txt@ff\h@lf\qn@width
+  \qd@skip\qn@width\advance\qd@skip-\hlthick
+  % 新增部分
+  \jpsiz@\tw@\fontdimen\si@\jpfont
+  \jp@xshift\fontdimen\si@\jpfont
+  \advance\jp@xshift-\fontdimen\si@\musixfont
+  \divide\jp@xshift\tw@
+  \jp@yshift\tw@\fontdimen\fiv@\musixfont
+  \advance\jp@yshift-\p@seven\fontdimen\fiv@\jpfont
+  \smallnot@shift.07\fontdimen\fiv@\jpfont
+  \jpch@rwidth\fontdimen\si@\jpfont
+  \jpgrac@width\fontdimen\si@\jptinyfont
+  \ulin@dist.25\fontdimen\fiv@\jpfont}
+
+%修正 0 线 (简谱用) 的情况
+\def\C@Inter{\stem@skip\interportee
+  \ifnum\nblines<\f@ur
+    \advance\stem@skip-\@ight\internote
+  \else
+    \advance\stem@skip-\nblines\internote
+    \advance\stem@skip-\nblines\internote
+    \advance\stem@skip\tw@\internote
+  \fi}
+
+\def\jpchar{\jpfont\char}
+\def\jpgracechar{\jptinyfont\char}
+
+%% 简谱用括号表示间奏等
+
+\def\jpleftparen{\kernm\jp@xshift \raise\jp@yshift\adv@box{\jpchar40}%
+    \kern\jp@xshift \global\not@type\@ne}
+\def\jprightparen{\kernm\jp@xshift \raise\jp@yshift\adv@box{\jpchar41}%
+    \kern\jp@xshift \global\not@type\z@}
+
+\def\jxgetn@i#1\relax{\n@viii\z@ \n@i\maxdimen \n@ii\z@% \n@iii\z@%最大宽度
+  \edef\t@ruc{\expandafter\f@tok #1\relax\af@tok}%
+  \edef\s@uite{\s@tok #1\empty\af@tok}%
+  \ifcat a\t@ruc
+    \n@i\expandafter`\t@ruc\relax
+	%%先把 \n@i 变成“距离中音 1 的值”
+    \ifnum\n@i=82 \ifcase\not@type \n@i48 \or \n@i56 \fi %大写字母 R 表示休止
+	\else\ifnum\n@i=88 % X（打击乐）
+	\else\ifnum\n@i=90 \n@i45 \else % Z（增时线）
+          \ifnum\n@i>96 \advance\n@i-99%小写字母, c 是中音 1
+	  \else \advance\n@i-81 \fi%让 C 对应 -14
+	  %低音区, 往下递减
+      \loop \ifnum\n@i<\z@ \advance\n@i\s@v@n \advance\n@ii\m@ne \repeat
+	  %高音区, 往上递增
+      \loop \ifnum\n@i>\si@ \advance\n@i-\s@v@n \advance\n@ii\@ne \repeat
+	  %\n@i 的 0 表示音符“1”, 即编码49
+          \ifcase\not@type \advance\n@i49 \or \advance\n@i57 \fi
+	  \ifnum\n@ii<\z@ \multiply\n@ii-1 \advance\n@ii\thr@@ \fi%低音点的码位
+	\fi\fi\fi\fi
+    \edef\ss@uite{\noexpand\n@fon{\s@uite}}%
+%%此处暂时没有改写, 一定有 bug, 不要用
+  %\else
+    %\let\ss@uite\empty
+    %\let\alt@suite\empty
+	%\if =\t@ruc \jna \edef\alt@suite{\noexpand\getn@i\s@uite\relax} \fi
+	%\if ^\t@ruc \jsh \edef\alt@suite{\noexpand\getn@i\s@uite\relax} \fi
+	%\if _\t@ruc \jfl \edef\alt@suite{\noexpand\getn@i\s@uite\relax} \fi
+    %\ifcat 1\t@ruc
+    %  \if =\t@ruc \let\@TI\na  \C@GET \fi
+    %  \if *\t@ruc \sk \C@Get \fi
+    %  \if .\t@ruc \let\@TI\pt   \C@GET \fi
+    %  \if >\t@ruc \let\@TI\dsh \C@GET \fi
+    %  \if <\t@ruc \let\@TI\dfl \C@GET \fi
+    %  \if !\t@ruc \transpose\normaltranspose \C@Get \fi  
+    %  \if '\t@ruc \advance\transpose\s@v@n   \C@Get \fi  
+    %  \if `\t@ruc \advance\transpose-\s@v@n  \C@Get \fi
+    %  \ifnum\n@viii<\maxdimen \n@i#1\fi
+    %\else
+    %  \if ^\t@ruc \let\@TI\sh \C@GET \fi
+    %  \if _\t@ruc \let\@TI\fl \C@GET \fi
+    %\fi\alt@suite
+  \fi}
+
+%%画单条减时线
+\def\dr@wsingulin@{\y@ii\n@vii\ulin@dist%这个数是正数, 因此以向下为正
+  \advance\y@ii-\jp@yshift
+  \y@iii\y@ii
+  \advance\y@ii-\hlthick%往上
+  \advance\y@iii\hlthick%往下
+  \y@iv\jpch@rwidth
+  \if\n@pt\z@ \else \advance\y@iv\n@pt\jpch@rwidth\fi
+  \vrule\@height-\y@ii\@depth\y@iii\@width\y@iv
+  \kernm\y@iv}
+
+%%画减时线及上下加点
+\def\dr@wadd{\y@v\jp@yshift
+  \ifnum\n@ii>\thr@@ \advance\y@v-\n@vii\ulin@dist
+  \else \ifcase\not@type \or \advance\y@v-\smallnot@shift \fi\fi% 是低音, 可能需要向下
+  \ifnum\n@ii>\z@ \raise\y@v\hbox{\jpchar\n@ii}\fi
+  \loop \ifnum\n@vii>\z@
+    \dr@wsingulin@ \advance\n@vii\m@ne
+  \repeat}
+
+%%画上下加点，连接的减时线用
+\def\dr@waddconn@ct@d{\y@v\jp@yshift
+  \ifnum\n@ii>\thr@@ \advance\y@v-\n@vii\ulin@dist
+  \else \ifcase\not@type \or \advance\y@v-\smallnot@shift \fi\fi% 是低音, 可能需要向下
+  \ifnum\n@ii>\z@ \raise\y@v\hbox{\jpchar\n@ii}\fi}
+
+%% 画倚音的减时线
+\def\drawgrac@add{%
+  \y@v\p@seven\jpsiz@ \advance\y@v\jp@yshift \y@ii\p@seven\ulin@dist
+  \ifnum\n@ii>\thr@@ \advance\y@v-\n@vii\y@ii \fi% 是低音, 需要向下
+  \ifnum\n@ii>\z@ \raise\y@v\hbox{\jpgracechar\n@ii}\fi % 画上下加点
+  \ifnum\n@vii>\z@
+    \y@ii\p@seven\jpsiz@ \advance\y@ii\jp@yshift
+    \y@iii\y@ii \advance\y@ii\hlthick \advance\y@iii-\hlthick
+    \advance\y@ii-\p@seven\ulin@dist \advance\y@iii-\p@seven\ulin@dist
+    \vrule\@height\y@ii\@depth-\y@iii\@width\jpgrac@width
+  \fi
+  \ifnum\n@vii>\@ne
+    \advance\y@ii-\p@seven\ulin@dist \advance\y@iii-\p@seven\ulin@dist
+    \vrule\@height\y@ii\@depth-\y@iii\@width\jpgrac@width
+  \fi}
+
+\def\jgetn@i{\jxgetn@i}
+%音符书写
+\def\jw@n{\kernm\jp@xshift
+  \ifnum\n@i<\@c
+    \n@vii\n@line \dr@wadd % 减时线
+    \raise\jp@yshift\adv@box\n@sym
+    \ss@uite% \advancetrue
+  \fi \kern\jp@xshift}
+%有连线的音符书写；2018-2-20
+\def\jw@u{\kernm\jp@xshift
+  \ifnum\n@i<\@c
+    \n@vii\n@line \dr@waddconn@ct@d % 减时线
+    \raise\jp@yshift\adv@box\n@sym
+    \ss@uite% \advancetrue
+  \fi \kern\jp@xshift}
+
+% 单下划线的音符
+\def\jw@grac@{\ifnum\n@i<\@c
+    \n@vii\n@line \drawgrac@add % 减时线
+    \y@ii\p@seven\jpsiz@ \advance\y@ii\jp@yshift
+    \raise\y@ii\hbox\@to\jpgrac@width{\j@ngrac@}\fi}
+
+%分析输入
+\def\jg@n#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@n \let\n@sym\j@n \jw@n}
+\def\jg@np#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@np \let\n@sym\j@np \jw@n}
+\def\jg@npp#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@npp \let\n@sym\j@npp \jw@n}
+\def\jg@grac@#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@grace \let\n@sym\j@ngrac@ \jw@grac@}
+%2018-2-20新增，对应连线
+\def\jg@u#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@u \let\n@sym\j@n \jw@u}
+\def\jg@up#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@up \let\n@sym\j@np \jw@u}
+\def\jg@upp#1{\check@staff
+  \jgetn@i#1\relax \let\n@fon\jg@upp \let\n@sym\j@npp \jw@u}
+
+
+\def\jfrac#1#2{\setbox\toks@box\vbox{\hbox{\ \meterfont#1}%
+  \hbox{\ \meterfont #2}}\vbox\@to\@ight\internote{\offinterlineskip
+  \vss\hbox\@to\wd\toks@box{\hss\meterfont#1\hss}\vss
+  \vbox\@to0.4pt{\hrule\@width\wd\toks@box}\vss
+  \hbox\@to\wd\toks@box{\hss\meterfont#2\hss}\vss}}
+
+% 2018-2-22 只用于乐谱首，拉开间距
+\def\inijfrac#1#2{\setbox\toks@box\vbox{\hbox{\ \meterfont#1}%
+  \hbox{\ \meterfont #2}}\kernm\jpch@rwidth\vbox\@to\@ight\internote{\offinterlineskip
+  \vss\hbox\@to\wd\toks@box{\hss\meterfont#1\hss}\vss
+  \vbox\@to0.4pt{\hrule\@width\wd\toks@box}\vss
+  \hbox\@to\wd\toks@box{\hss\meterfont#2\hss}\vss}\kern\jpch@rwidth}
+
+\def\j@n{\jpchar\n@i}
+\def\j@np{\jpchar\n@i.}
+\def\j@npp{\let\n@pt\tw@ \jpchar\n@i\char1}
+\def\j@ngrac@{\jpgracechar\n@i}
+
+%正式输入的命令
+\def\jq{\let\n@line\z@ \let\n@pt\z@ \jg@n}
+\def\jc{\let\n@line\@ne \let\n@pt\z@ \jg@n}
+\def\jcc{\let\n@line\tw@ \let\n@pt\z@ \jg@n}
+\def\jccc{\let\n@line\thr@@ \let\n@pt\z@ \jg@n}
+\def\jcccc{\let\n@line\f@ur \let\n@pt\z@ \jg@n}
+
+\def\jqp{\let\n@line\z@ \let\n@pt\@ne \jg@np}
+\def\jcp{\let\n@line\@ne \let\n@pt\@ne \jg@np}
+\def\jccp{\let\n@line\tw@ \let\n@pt\@ne \jg@np}
+\def\jcccp{\let\n@line\thr@@ \let\n@pt\@ne \jg@np}
+\def\jccccp{\let\n@line\f@ur \let\n@pt\@ne \jg@np}
+
+\def\jqpp{\let\n@line\z@ \let\n@pt\tw@ \jg@npp}
+\def\jcpp{\let\n@line\@ne \let\n@pt\tw@ \jg@npp}
+\def\jccpp{\let\n@line\tw@ \let\n@pt\tw@ \jg@npp}
+\def\jcccpp{\let\n@line\thr@@ \let\n@pt\tw@ \jg@npp}
+\def\jccccpp{\let\n@line\f@ur \let\n@pt\tw@ \jg@npp}
+
+\def\jgracesingle{\kernm\jpgrac@width \let\n@line\@ne \jg@grac@
+  \y@ii\p@seven\jpsiz@ \advance\y@ii\jp@yshift
+  \raise\y@ii\hbox{\jpgracechar10}}
+\def\jgracedouble#1#2{\kernm#1\jpgrac@width \let\n@line\tw@ \jg@grac@#2
+  \y@ii\p@seven\jpsiz@ \advance\y@ii\jp@yshift \advance\y@ii-\p@seven\ulin@dist
+  \raise\y@ii\hbox{\jpgracechar10}}
+
+% 2019-2-18 重写下划线机制
+% 2018-2-21 下划线变量与
+\def\test@ulnum{\ifnum\n@i<\z@ \n@i\@c \fi
+  \ifnum\n@i<\maxinstruments \else
+    \count@\maxinstruments \advance\count@\m@ne
+    \errmessage{Wrong underline reference number \the\n@i! (valid: 0 to \the\count@)}
+    \n@i\z@
+  \fi
+  \advance\n@i\@ne}%
+
+% 处理下划线开始
+\def\iul#1{\global\let\n@line\@ne \s@l@ctbeam#1\relax \i@ul}
+\def\iuul#1{\global\let\n@line\tw@ \s@l@ctbeam#1\relax \s@l@ctc \i@uul}
+\def\iuuul#1{\global\let\n@line\thr@@ \s@l@ctbeam#1\relax \s@l@ctd \i@uuul}
+\def\iuuuul#1{\global\let\n@line\f@ur \s@l@ctbeam#1\relax \s@l@cte \i@uuuul}
+
+\def\i@ul{\ifnum\b@n=\z@ \else \C@tul\t@uul \fi \global\b@n\@ne
+  \getcurpos \global\b@x\y@v}
+\def\i@uul{\ifnum\b@n=\z@ \i@ul\fi \n@uul}
+\def\i@uuul{\ifnum\b@n=\z@ \i@uul\fi \n@uuul}
+\def\i@uuuul{\ifnum\b@n=\z@ \i@uuul\fi \n@uuuul}
+
+% 处理下划线增加
+\def\nuul#1{\s@l@ctbeam#1\relax \s@l@ctc \n@uul}
+\def\nuuul#1{\s@l@ctbeam#1\relax \s@l@ctd \n@uuul}
+\def\nuuuul#1{\s@l@ctbeam#1\relax \s@l@cte \n@uuuul}
+
+\def\n@uul{\C@nul\c@x}
+\def\n@uuul{\C@nul\d@x}
+\def\n@uuuul{\C@nul\e@x}
+
+\def\C@nul#1{\advance\b@n\@ne \getcurpos \global#1\y@v}
+
+% 处理下划线结束
+\def\tul#1{\s@l@ctbeam#1\relax \C@tul\t@uul \global\let\n@line\z@}
+\def\tuul#1{\s@l@ctbeam#1\relax \s@l@ctcde \t@uul \global\let\n@line\@ne}
+\def\tuuul#1{\s@l@ctbeam#1\relax \s@l@ctcde \t@uuul \global\let\n@line\tw@}
+\def\tuuuul#1{\s@l@ctbeam#1\relax \s@l@ctcde \t@uuuul \global\let\n@line\thr@@}
+
+\def\C@tul#1{%
+  \ifcase\b@n \or \or \s@l@ctc \or \s@l@ctd \or \s@l@cte\fi
+  \ifnum\b@n>\@ne #1\fi
+  \beam@pos\b@x
+  \y@i-\ulin@dist % 向下偏移量
+  \advance\y@i\jp@yshift
+  \advance\y@ii\jpch@rwidth\relax
+  \check@staff
+    \llap{\@underline\kernm\jpch@rwidth\kern\jp@xshift}\relax
+  \fi\global\b@n\z@}
+
+\def\t@uul{\n@v\tw@ \C@ub\t@uuul\n@uul \beam@pos\c@x \C@txul}
+\def\t@uuul{\n@v\thr@@ \C@ub\t@uuuul\n@uuul \beam@pos\d@x \C@txul}
+\def\t@uuuul{\n@v\f@ur \C@ub\empty\n@uuuul \beam@pos\e@x \C@txul}
+
+\def\C@ub#1#2{%
+  \n@ii\b@n
+  \ifnum\n@ii>\n@v #1\fi}
+  %\loop
+  %\advance\n@v\m@ne
+  %\ifnum\n@ii=\n@v #2\fi
+  %\ifnum\n@v>\@ne \repeat}
+
+% 
+\def\C@txul{\y@i\b@n\ulin@dist
+  \y@i-\y@i
+  \advance\y@i\jp@yshift
+  \advance\y@ii\jpch@rwidth\relax
+  \check@staff
+    \llap{\@underline\kernm\jpch@rwidth\kern\jp@xshift}\fi
+  \global\advance\b@n\m@ne}
+
+% 绘制下划线
+\def\@underline{% \y@ii : 长度, \y@i : 高度
+  \y@iii\y@i \y@iv\y@i
+    \advance\y@iii-\hlthick \advance\y@iv\hlthick
+    \vrule\@height\y@iv\@depth-\y@iii\@width\y@ii}
+
+%音符输入
+\def\jn{\let\n@pt\z@ \jg@u}
+\def\jnp{\let\n@pt\@ne \jg@up}
+\def\jnpp{\let\n@pt\tw@ \jg@upp}
+
+%简化输入
+\def\tjn#1{\tul#1\jn}
+\def\tjnp#1{\tul#1\jnp}
+\def\tjnpp#1{\tul#1\jnp}
+
+\def\Djul#1#2{\iul0\jn#1\tul0\jn#2}
+\def\Djuul#1#2{\iuul0\jn#1\tul0\jn#2}
+\def\Djuuul#1#2{\iuuul0\jn#1\tul0\jn#2}
+\def\Djuuuul#1#2{\iuuuul0\jn#1\tul0\jn#2}
+
+\def\Tjul#1#2#3{\iul0\jn#1\jn#2\tul0\jn#3}
+\def\Tjuul#1#2#3{\iuul0\jn#1\jn#2\tul0\jn#3}
+\def\Tjuuul#1#2#3{\iuuul0\jn#1\jn#2\tul0\jn#3}
+\def\Tjuuuul#1#2#3{\iuuuul0\jn#1\jn#2\tul0\jn#3}
+
+\def\Qjuul#1#2#3#4{\iuul0\jn#1\jn#2\jn#3\tul0\jn#4}
+\def\Qjuuul#1#2#3#4{\iuuul0\jn#1\jn#2\jn#3\tul0\jn#4}
+\def\Qjuuuul#1#2#3#4{\iuuuul0\jn#1\jn#2\jn#3\tul0\jn#4}
+
+% 连线
+\def\ijcslur{\i@jslur\h@lf{1\p@seven\internote}a}
+\def\ijfslur{\i@jslur\h@lf{1\p@seven\internote}e}
+\def\tjslur{\t@jslur\h@lf}
+
+% 开始连线。
+% #1 水平偏移量 #2 垂直偏移量 #3 形态 #4 编号 #5 高度（简谱为上加点数）
+\def\i@jslur#1#2#3#4#5{%
+  \check@staff
+  \global\advance\N@s\@ne % update slurcounter
+  \s@l@ctslur#4\relax
+% test for already invoked \islur
+  \if x\the\s@s \else\errmessage{\@mis\noexpand\tjslur#4}\fi
+  \global\s@Y#2% store voffset (abs. dim. to rel. height)
+  \global\s@s{#3}% 形状
+  \global\s@d{}% 简谱没有点连线
+  \global\s@N\noinstrum@nt % store instrument number
+  \n@i#5 \advance\n@i\s@v@n
+  \global\s@y\n@i % 开始点的高度
+  \global\s@a\altportee % store altportee of current slur
+  \getcurpos
+  \advance\y@v#1\qn@width
+  \global\s@x\y@v
+\fi}
+
+% 结束连线。
+% #1 水平偏移量 #2 编号 #3 高度（简谱为上加点数）
+\def\t@jslur#1#2#3{%
+  \check@staff
+  \s@l@ctslur#2\relax
+  \y@iv#1\qn@width
+  \def\@sense{\the\s@s}%
+  \edef\@dotted{\the\s@d}%+ickd
+% test for missing \islur
+  \if x\@sense \errmessage{\@mis\noexpand\ijslur#2}\fi
+% compute length
+  \getcurpos
+  \advance\y@v\y@iv
+% eoline
+  \y@eol\advance\y@-\beforeruleskip
+% clip slur at eoline
+  \ifdim\y@v>\y@ \y@v\y@ \advance\y@v\beforeruleskip \y@iv\beforeruleskip \fi
+  \advance\y@v-\s@x
+  \n@i#3 \advance\n@i\s@v@n
+  \jwrit@slur\s@y\n@i\y@v{-\y@iv}%
+% reset sense of slur
+  \global\s@s{x}\let\T@i\empty
+  \global\advance\N@s\m@ne
+  \fi}% update slur counter
+
+% 重定义a～c、e～g为简谱普通、简谱无尾、简谱无头。后两个专用于换行时的情况。
+% 第一组为弯连线，后一组为平连线。
+% #1 开始高度 #2 结束高度 #3 长度 #4 右偏移量
+\def\jwrit@slur#1#2#3#4{\check@staff %  modified: sld... into slurd...   12.04.95 ick
+  \edef\@sense{\the\s@s}%
+  \n@iv#1%
+  \n@vi#2%
+%%
+%   Get note vertical offsets
+%   \n@iv=   开始时的高度
+%   \n@vi=   结束时的高度
+%
+% 取消字体选择，因为只需要1个字体就足够了
+%
+  \n@i\n@iv \pl@base % \y@i = 开始时的高度
+  \n@ii\n@vi
+%
+%   原本需要变量 \y@iii，此处取消，因为只有一个连线字体，可以写死
+%%
+  \y@ii#3%
+%
+  \if a\@sense % 弯连线，有两端
+    \ifnum\n@ii>\n@i \n@i\n@ii \pl@base \fi % 使用两端较高的高度
+    \ifdim\y@ii>62pt % 超过62pt强制使用平连线
+      \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\char33\leaders\hrule height4.4pt depth-3.4pt\hfill\char32}\kern#4}%
+    \else
+      \y@\@ne\y@ii
+      \advance\y@-\si@\p@
+      \n@v\y@ \sp@pt\f@ur % 选择适当的字符
+      \ifnum\n@v>13 \n@v=13\relax \fi % 确保不超过上界
+      \ifnum\n@v<0 \n@v=0 \relax \fi % 确保不超过下界
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\n@v\hss}\kern#4}%
+    \fi
+  \else \if b\@sense % 弯连线，有左端（用于行末）
+    \advance\y@i\s@a \let\@Ti\empty %行末需要加入的高度
+    \ifdim\y@ii>42pt % 超过42pt强制使用平连线
+      \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\char33\leaders\hrule height4.4pt depth-3.4pt\hfill}\kern#4}%
+    \else
+      \y@\y@ii
+      \advance\y@-\si@\p@
+      \n@v\y@ \sp@pt\f@ur % 选择适当的字符
+      \ifnum\n@v>\@ight \n@v=\@ight \fi % 确保不超过上界
+      \ifnum\n@v<0 \n@v=0 \relax \fi % 确保不超过下界
+      \advance\n@v\@xxiii % 左连线在23号开始
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\n@v\hss}\kern#4}%
+    \fi
+  \else \if c\@sense % 弯连线，有右端（用于行首）
+    \n@i\n@ii % 令高度与右端对齐
+    \ifdim\y@ii>42pt % 超过42pt强制使用平连线
+      \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\leaders\hrule height4.4pt depth-3.4pt\hfill\char32}\kern#4}%
+    \else
+      \y@\y@ii
+      \advance\y@-\si@\p@
+      \n@v\y@ \sp@pt\f@ur % 选择适当的字符
+      \ifnum\n@v>\@ight \n@v=\@ight \fi % 确保不超过上界
+      \ifnum\n@v<0 \n@v=0 \relax \fi % 确保不超过下界
+      \advance\n@v\fourt@@n % 右连线在14号开始
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\n@v\hss}\kern#4}%
+    \fi
+  \else \if e\@sense % 平连线，有两端
+    \ifnum\n@ii>\n@i \n@i\n@ii \pl@base \fi % 使用两端较高的高度
+    \ifdim\y@ii<16pt % 小于16pt强制使用弯连线
+      \y@\y@ii
+      \advance\y@-\si@\p@
+      \n@v\y@ \sp@pt\f@ur % 选择适当的字符
+      \ifnum\n@v<0 \n@v=0 \relax \fi % 确保不超过下界
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\n@v\hss}\kern#4}%
+    \else \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\char33\leaders\hrule height4.4pt depth-3.4pt\hfill\char32}\kern#4}%
+    \fi
+  \else \if f\@sense % 平连线，有左端（用于行末）
+    \advance\y@i\s@a \let\@Ti\empty %行末需要加入的高度
+    \ifdim\y@ii<8pt % 小于8pt强制使用弯连线
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\fourt@@n\hss}\kern#4}%
+    \else \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\char33\leaders\hrule height4.4pt depth-3.4pt\hfill}\kern#4}%
+    \fi
+  \else \if g\@sense % 平连线，有右端（用于行首）
+    \ifdim\y@ii<8pt % 小于8pt强制使用弯连线
+      \llap{\raise\y@i\hbox\@to\y@ii{\hss\jsltwty\char\@xxiii\hss}\kern#4}%
+    \else \llap{\raise\y@i\hbox\@to\y@ii{%
+        \jsltwty\leaders\hrule height4.4pt depth-3.4pt\hfill\char32}\kern#4}%
+    \fi\fi\fi\fi\fi\fi\fi\fi} % 连线绘制命令结束
+
+\let\ijtuplet\ijcslur
+\def\tjtuplet{\t@jtuplet\h@lf}
+\let\ijtrio\ijcslur
+\def\tjtrio#1#2{\t@jtuplet\h@lf#1#23}
+
+% 结束连音。
+% #1 水平偏移量 #2 编号 #3 高度（简谱为上加点数） #4 数字
+\def\t@jtuplet#1#2#3#4{%
+  \check@staff
+  \s@l@ctslur#2\relax
+  \y@iv#1\qn@width
+  \def\@sense{\the\s@s}%
+  \edef\@dotted{\the\s@d}%+ickd
+% test for missing \islur
+  \if x\@sense \errmessage{\@mis\noexpand\ijslur#2}\fi
+% compute length
+  \getcurpos
+  \advance\y@v\y@iv
+% eoline
+  \y@eol\advance\y@-\beforeruleskip
+% clip slur at eoline
+  \ifdim\y@v>\y@ \y@v\y@ \advance\y@v\beforeruleskip \y@iv\beforeruleskip \fi
+  \advance\y@v-\s@x
+  \n@i#3 \advance\n@i\s@v@n
+  \jwrit@tuplet\s@y\n@i\y@v{-\y@iv}#4%
+% reset sense of slur
+  \global\s@s{x}\let\T@i\empty
+  \global\advance\N@s\m@ne
+  \fi}% update slur counter
+
+% #1 开始高度 #2 结束高度 #3 长度 #4 右偏移量 #5 数字
+\def\jwrit@tuplet#1#2#3#4#5{\check@staff
+  \edef\@sense{\the\s@s}%
+  \n@iv#1%
+  \n@vi#2%
+%%
+%   Get note vertical offsets
+%   \n@iv=   开始时的高度
+%   \n@vi=   结束时的高度
+%
+% 取消字体选择，因为只需要1个字体就足够了
+%
+  \n@i\n@iv \ifnum\n@vi>\n@i \n@i\n@vi \fi \pl@base % 使用两端较高的高度
+%
+%   原本需要变量 \y@iii，此处取消，因为只有一个连线字体，可以写死
+%%
+  \y@ii#3\relax
+  \y@\y@ii
+  \setbox0=\hbox{\sevenrm\thinspace#5\thinspace}%
+  \advance\y@-\wd0
+  \divide\y@\tw@ % 得到半边连线的长度
+  \ifdim\y@>42pt % 超过42pt强制使用平连线
+    \llap{\raise\y@i\hbox\@to\y@ii{%
+      \jsltwty\char33\leaders\hrule height4.4pt depth-3.4pt\hfill
+      \hss\raise1.9pt\hbox{\sevenrm#5}\hss
+      \leaders\hrule height4.4pt depth-3.4pt\hfill\char32}\kern#4}%
+  \else % 使用弯连线
+    \advance\y@-\si@\p@
+    \n@v\y@ \sp@pt\f@ur % 选择适当的字符
+    \ifnum\n@v>\@ight \n@v=\@ight \fi % 确保不超过上界
+    \ifnum\n@v<0 \n@v=0 \relax \fi % 确保不超过下界
+    \n@ii\n@v \advance\n@v\@xxiii \advance\n@ii\fourt@@n % 两边连线的符号
+    \llap{\raise\y@i\hbox\@to\y@ii{%
+      \jsltwty\hss\char\n@v\hss\hss
+      \setbox0=\hbox{\jsltwty\char\n@v}\y@\ht0 \advance\y@-2.5pt
+      \raise\y@\hbox{\sevenrm#5}\hss\hss\char\n@ii\hss}\kern#4}%
+  \fi} % N连音绘制命令结束
+
+%% 简谱的升降号
+\def\jna{\small@test\jbigna\else\jsmallna\fi}
+\def\jfl{\small@test\jbigfl\else\jsmallfl\fi}
+\def\jsh{\small@test\jbigsh\else\jsmallsh\fi}
+
+\def\writ@jba{\pl@base\kernm\jp@xshift\raise\y@i\llap{\musixchar\n@v\kern\accshift}\kern\jp@xshift}
+\def\set@jba{\let\@Ti\writ@jba \n@vi\z@}
+
+\def\jbigna{\set@jba  \n@v\f@ur \jC@acc}
+\def\jbigfl{\set@jba  \n@v\z@   \jC@acc}
+\def\jbigsh{\set@jba  \n@v\tw@  \jC@acc}
+
+\def\jsmallna{\set@jsa  \n@v\f@ur \jC@acc}
+\def\jsmallfl{\set@jsa  \n@v\z@   \jC@acc}
+\def\jsmallsh{\set@jsa  \n@v\tw@  \jC@acc}
+
+\def\writ@jsa{\pl@base\raise\y@i\llap{\musixchar\n@v\kern\accshift}}
+\def\set@jsa{\let\@Ti\writ@sa \n@iv\fiv@ \n@vi\@xl }
+
+\def\jC@acc{\check@staff \n@i\si@
+  \advance\n@v\@l \advance\n@v\n@vi \expandafter\@Ti % [version 1.15] (Hiroaki)
+  \fi}
+  
+%简谱调号
+\def\jpkey#1#2{{\lyricsoff\hbox\@to.5em{\jpten #1\hss}\rm\thinspace =\thinspace #2\lyricson}}
+
+\def\jptkey#1#2{{\lyricsoff\hbox\@to1.75em{转\hskip\jpten #1\hskip0.5em}\rm = #2\lyricson}}
+
+% 重写换行命令，加入简谱连线的支持
+\def\z@suspend{%
+  \z@suspend@autoflag % used in musixcpt only
+% cut pedal rule  1.21 RDT
+   \ifdim\pdl@pos=\z@\else%
+     \noport@@\z@
+     \znotes\selectinstrument{\pdl@instr}\selectstaff{\pdl@staff}\pdlc@\en%   
+     \global\def\pdl@cut{\@one}%
+   \fi
+% cutvolta
+  \write@volta@hrule
+  \ifx\volta@type\tw@\let\volta@set\tw@ \let\volta@type\empty
+    \let\volta@cut\tw@\fi % restart volta at next line if continuous
+  \ifx\volta@type\thr@@\let\volta@set\thr@@ \let\volta@type\empty
+    \let\volta@cut\thr@@ \fi % restart volta at next line if continuous
+% cutoctline
+  \o@loop
+  \ifdim\o@x<\maxdimen \let\T@ii\n@ii \C@TO \o@x\z@ \fi
+  \repeat
+% cut trill
+  \tr@loop
+  \ifdim\tr@x<\maxdimen \let\T@ii\n@ii \C@TR \tr@x\z@ \fi
+  \repeat
+% cutslur
+  \ifnum\N@s>\z@%     % any pending slurs ?
+    \n@viii\maxslurs % test all possible slur numbers [version 1.15] (Hiroaki)
+    \advance\n@viii\m@ne
+    \loop\ifnum\n@viii>\m@ne
+      \s@l@ctslur\n@viii\relax
+      \edef\@sense{\the\s@s}%
+      \if x\@sense%     % sense flag
+      \else%            % found slur
+        \edef\@dotted{\the\s@d}% +ickd
+        \y@v\lin@pos % get current position
+        \advance\y@v-\s@x % slurlength = currentpos - startpos
+        \let\@Ti\@ne    % set flag for \writ@slur (\staffbotmarg)
+        \ifnum\s@z=\maxdimen \s@z\s@y \fi % flag (\breakslur not used -> tie)
+        \if a\@sense \s@s{b}\jwrit@slur\s@y\s@y\y@v\z@ \s@s{c}\else % 弯连线
+        \if e\@sense \s@s{f}\jwrit@slur\s@y\s@y\y@v\z@ \s@s{g}\else % 平连线
+        \writ@slur\s@y\s@z\y@v\p@% avoid touching the bar rule
+        \fi\fi
+        \s@x\z@% reset startpos for next line
+        \s@z\maxdimen% reset breakslur
+      \fi
+    \advance\n@viii\m@ne \repeat
+  \fi\s@indent\z@
+%
+  \ragg@d\par\lin@pos\z@ \endcatcodesmusic}
+
+\ifx\undefined\lyr \else % 支持musixlyr宏包的设置
+\let\orig@jw@n\jw@n
+% 2018-2-26 取消在增时线或休止符下自动设置歌词
+\def\jw@n{%
+  \ifnum\n@i<\@c
+    \ifnum\n@i=45 \else \ifnum\n@i=48\else % 增时线或休止符下没有歌词
+      \decide@lyrmode
+      \main@aux@or@not{\forall@verses{\@context\evtl@next@lyr}}%
+    \fi\fi \kernm\jp@xshift
+    \n@vii\n@line \dr@wadd % 减时线
+    \raise\jp@yshift\adv@box\n@sym
+    \ss@uite% \advancetrue
+    \kern\jp@xshift
+  \fi}
+
+\let\orig@jw@u\jw@u
+\def\jw@u{%
+  \ifnum\n@i<\@c
+    \ifnum\n@i=48\else % 休止符下没有歌词
+      \decide@lyrmode
+      \main@aux@or@not{\forall@verses{\@context\evtl@next@lyr}}%
+    \fi \kernm\jp@xshift
+    \n@vii\n@line \dr@waddconn@ct@d % 减时线
+    \raise\jp@yshift\adv@box\n@sym
+    \ss@uite% \advancetrue
+    \kern\jp@xshift
+  \fi}
+
+\let\@orig@z@suspend\z@suspend
+\def\z@suspend{%
+  \znotes\sysend@lyrics\empty\en
+  \znotes\sysend@lyrics\auxlyr\en
+  \@orig@z@suspend}
+
+\fi
+
+\let\jpfont\jpnorfont
+
+\normalmusicsize
+
+\makeatother
+\endinput

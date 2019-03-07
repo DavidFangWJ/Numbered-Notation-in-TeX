@@ -1,0 +1,66 @@
+#include <stdlib.h>
+#ifndef PREPROCESSOR_NOTE_LIST
+#define PREPROCESSOR_NOTE_LIST
+
+struct NoteNode {
+    uint8_t category;
+    int8_t pitch;
+    struct NoteNode* next;
+};
+
+struct NoteNode* newNoteNode(uint8_t, int8_t);
+
+void deleteNoteNode(struct NoteNode*);
+
+#define NOTE_CAT_QUARTER_NOTE 0
+#define NOTE_CAT_DOTTED_QUARTER_NOTE 1
+#define NOTE_CAT_DOUBLE_DOTTED_QUARTER_NOTE 2
+
+#define NOTE_CAT_EIGHTH_NOTE 3
+#define NOTE_CAT_DOTTED_EIGHTH_NOTE 4
+#define NOTE_CAT_DOUBLE_DOTTED_EIGHTH_NOTE 5
+
+#define NOTE_CAT_SIXTEENTH_NOTE 6
+#define NOTE_CAT_DOTTED_SIXTEENTH_NOTE 7
+#define NOTE_CAT_DOUBLE_DOTTED_SIXTEENTH_NOTE 8
+
+#define NOTE_CAT_32ND_NOTE 9
+#define NOTE_CAT_DOTTED_32ND_NOTE 10
+// 11 is reserved
+
+#define NOTE_CAT_64TH_NOTE 12
+// 12 and 13 is reserved
+
+#define NOTE_CAT_QUARTER_REST 15
+#define NOTE_CAT_DOTTED_QUARTER_REST 16
+#define NOTE_CAT_DOUBLE_DOTTED_QUARTER_REST 17
+
+#define NOTE_CAT_EIGHTH_REST 18
+#define NOTE_CAT_DOTTED_EIGHTH_REST 19
+#define NOTE_CAT_DOUBLE_DOTTED_EIGHTH_REST 20
+
+#define NOTE_CAT_SIXTEENTH_REST 21
+#define NOTE_CAT_DOTTED_SIXTEENTH_REST 22
+#define NOTE_CAT_DOUBLE_DOTTED_SIXTEENTH_REST 23
+
+#define NOTE_CAT_32ND_REST 24
+#define NOTE_CAT_DOTTED_32ND_REST 25
+// 26 is reserved
+
+#define NOTE_CAT_64TH_REST 27
+// 28 and 29 is reserved
+
+#define NOTE_CAT_DASH 64
+
+#define NOTE_CAT_NEW_METER 128
+#define NOTE_CAT_CHANGE_METER 129
+
+#define NOTE_CAT_NOTE_START 0
+#define NOTE_CAT_NOTE_END 14
+#define NOTE_CAT_REST_START 15
+#define NOTE_CAT_REST_END 29
+#define NOTE_CAT_DOT_CATEGORY 3
+
+#define NOTE_JP_OCTAVE 7
+
+#endif
