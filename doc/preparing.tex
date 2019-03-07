@@ -1,0 +1,262 @@
+\chapter{输入音符的预备工作}\label{preparing}
+
+\section{谱表的水平间距}\label{newspacings}
+\subsection{音符间距}
+\musixtex 宏集提供了一系列设置音符间水平间距的命令，其默认意义如表\ref{spacingtable}所示。
+\begin{table}
+\begin{small}
+\begin{center}
+\tinynotesize
+\renewcommand{\arraystretch}{1.2}% I hate LaTeX  (attributed to Daniel Taupin)
+\makeatletter\jp@yshift0pt\makeatother
+\begin{tabular}{|l|c|c|l@{~~~~}l|}
+\multicolumn{1}{c}{}&
+\multicolumn{2}{c}{间距}&
+\multicolumn{2}{c}{}\\
+\multicolumn{1}{c}{命令}&
+\multicolumn{1}{c}{（等差）}&
+\multicolumn{1}{c}{（等比）}&
+\multicolumn{2}{c}{建议的时值}\\\hline
+\ctrlseq{znotes}\verb| ... & ... & ... \en|& 0 & 0
+  &&特殊情况\\
+\ctrlseq{notes}\verb|  ... & ... & ... \en|& 2.00 & 2.00 &\jcc{g}&16分\\
+\ctrlseq{notesp}\verb| ... & ... & ... \en|& 2.50 & 2.38&\jccp{g}&附点16分、三连音8分\\
+\ctrlseq{Notes}\verb|  ... & ... & ... \en|& 3.00 & 2.83
+  &\jc{g}&8分\\
+\ctrlseq{Notesp}\verb| ... & ... & ... \en|& 3.50 & 3.36
+  &\jcp{g}&附点8分、三连音4分\\
+\ctrlseq{NOtes}\verb|  ... & ... & ... \en|& 4.00 & 4.00
+  &\jq{g}&4分\\
+\ctrlseq{NOtesp}\verb| ... & ... & ... \en|& 4.50 & 4.76
+  &\jqp{g}&附点4分、三连音2分\\
+  \hline
+\end{tabular}\end{center}
+\end{small}
+\caption{水平间距命令}
+\label{spacingtable}
+\end{table}
+\endinput
+What each of these macros actually does is to set an
+internal dimension register \keyindex{noteskip} to the given multiple
+of the fundamental spacing unit \keyindex{elemskip}
+(which has dimensions of length, usually given in points).
+Normally, every \itxem{spacing note} (e.g.,
+\keyindex{qu},
+\keyindex{qb}, \keyindex{hl}) will then be followed by a spacing of
+width \keyindex{noteskip}.  By selecting a particular note spacing macro
+from the above table, the typesetter can thus control the relative spacing
+between notes.
+
+The actual spacing will therefore be determined by the value of
+\verb|\elemskip|. On the first pass, \TeX\ will set a default value for
+\verb|\elemskip| based on the declared music size, or the user can
+set it to any hard dimension he chooses. However, the value on the
+first pass doesn't matter as much as you might think (more about that later).
+On the second pass,
+\verb|musixflx| determines where the system breaks will come,
+and then computes the final value of \verb|\elemskip| for each system.
+
+If the arithmetic progression of note spacings in the above table does not
+meet your wishes, you may activate an alternate set with
+the command \keyindex{geometricskipscale}. As implied by the name, this
+is a geometric progression, where {\Bslash Notes} is
+$\sqrt{2}$ times wider than {\Bslash notes},  {\Bslash NOtes} is $\sqrt{2}$
+times wider than {\Bslash Notes}, and so forth.
+Then the factors in the middle column
+of the above table will be replaced by the sequence
+$2.00$, $2.38$, $2.83$, $3.36$, $4.00$, $4.76$, $5.66$, $6.72$, and $8.00$. Two additional
+macros, \verb|\NOTEsp| and \verb|\NOTES|, will be defined corresponding to
+factors $9.52$ and $11.32$. The original arithmetic progression can be
+restored by \keyindex{arithmeticskipscale}.
+
+If neither of the predefined progressions satisfies you, you may define
+your own, using the more general macro \verb|\vnotes| in the same manner
+that \musixtex\ uses it for the predefined progressions. So for example
+\verb|\def\NOtes{\vnotes5.34\elemskip}| will redefine \verb|\NOtes| in
+the obvious way, and the extension to the other spacing macros should
+likewise be obvious.
+The following abbreviations may be useful:
+\begin{quote}
+\begin{tabular}{lcl}
+ \keyindex{nnotes} &for&\verb|\vnotes1.6\elemskip|\\
+ \keyindex{nnnotes} &for&\verb|\vnotes1.28\elemskip|
+\end{tabular}
+\end{quote}
+
+In addition, inside any pair \verb|\notes...\en| there are two
+equivalent ways to
+locally redefine \verb|\noteskip| to another scalable value, namely by
+issuing a command like
+\verb|\noteskip=2.4\noteskip| or \keyindex{multnoteskip}\verb|{2.4}|, which
+have the expected effect until the notes group is terminated or
+\verb|\noteskip| is further redefined.
+Finally, by issuing a command like
+\keyindex{scale}\verb|{2.4}| outside any notes group, you can scale all subsequent
+\verb|\noteskip|s by any desired factor.
+
+These facilities may be useful, for example,
+to control spacing when there are three equal duration notes in one staff against two
+ in another.
+
+
+%\subsection{\Bslash{\tt elemskip}, \Bslash{\tt beforeruleskip} and
+%\Bslash{\tt afterruleskip}}
+%
+% avr wants to call these "commands", but das doesn't.
+%\subsection{Commands {\Bslash\texttt{elemskip}},
+%{\Bslash\texttt{beforeruleskip}}
+%and {\Bslash\texttt{afterruleskip}}}
+%\subsection{{\Bslash\texttt{elemskip}},
+%{\Bslash\texttt{beforeruleskip}}
+%and {\Bslash\texttt{afterruleskip}}}
+
+\subsection{Before and after rule skips}
+
+
+We've just seen how \verb|\elemskip| is used to scale the spacings between notes.
+There are two other spacing units that share some behavior with \verb|\elemskip|:
+\verb|\beforeruleskip| is the horizontal space that is automatically inserted
+\ital{before} every bar line, while \verb|\afterruleskip| goes \ital{after}
+every bar line. (In
+practice \verb|\beforeruleskip| is almost aways set to \verb|0pt| because there
+will typically already be a space of \verb|1\noteskip| before every barline.)
+On the first pass, just as with \verb|\elemskip|, \musixtex\ assigns them default
+values according to the following table:
+
+%\begin{quote}\begin{tabular}{lrrr}\hline
+%\ital{using}&\keyindex{elemskip}&\keyindex{afterruleskip}
+%  &\keyindex{beforeruleskip}\\\hline
+%\keyindex{normalmusicsize}&6pt&8pt&0pt\\
+%\keyindex{smallmusicsize}&4.8pt&6pt&0pt\\\hline
+%\end{tabular}\end{quote}
+
+\begin{center}\begin{tabular}{lrrr}\hline
+\ital{using}&\keyindex{elemskip}&\keyindex{afterruleskip}
+  &\keyindex{beforeruleskip}\\\hline
+\keyindex{normalmusicsize}&{\tt 6pt}&{\tt 8pt}&{\tt 0pt}\\
+\keyindex{smallmusicsize}&{\tt 4.8pt}&{\tt 6pt}&{\tt 0pt}\\\hline
+\end{tabular}\end{center}
+
+\noindent In the second pass, \verb|musixflx| assigns new values to each
+of these dimensions, a different set for each line or system. It does this
+in such a way that available scalable horizontal space in each system is
+exactly filled up.
+
+The values that are assigned to these dimensions on the first pass, whether by
+default or explicitly by the user or in some combination, only matter insofar
+as their relative sizes. That's why we earlier stated that the first-pass value
+of \verb|\elemskip| didn't matter as much as you might think. For both music sizes
+in the table above, it appears that by default \verb|\afterruleskip| is
+\verb|1.3333\elemskip|\footnote{Editor's note: It is a mystery why the authors
+%of \musixtex\ didn't simply define \Bslash{\tt beforeruleskip} and \Bslash{\tt afterruleskip} as
+%specific multiples of \Bslash{\tt elemskip}}.
+of \musixtex\ didn't simply define \Bslash\texttt{beforeruleskip} and \Bslash\texttt{afterruleskip} as
+specific multiples of \Bslash\texttt{elemskip}.}.
+
+Note that if you do want to change any of these
+values, you have to do so \ital{after} setting the
+music size and before \verb|\startpiece|.
+
+Here is an example that illustrates the various dimensions under discussion:\\
+ %\check
+\begin{music}\nostartrule
+\afterruleskip7pt
+\beforeruleskip2pt
+\parindent0pt
+\setclefsymbol1\empty
+% special problems afford special solutions
+\makeatletter\global\clef@skip\z@ \makeatother
+\startpiece
+\zchar{16}{\hbox to\afterruleskip{\downbracefill}}%
+\zchar{19}{\hbox to\afterruleskip{\hss a\hss}}%
+\addspace\afterruleskip
+\zchar{16}{\hbox to2\elemskip{\downbracefill}}%
+\zchar{19}{\hbox to2\elemskip{\hss b\hss}}%
+\zchar{3}{\hbox to\elemskip{\upbracefill}\hbox to\elemskip{\upbracefill}}%
+\zchar{-1}{\hbox to\elemskip{\hss e\hss}\hbox to\elemskip{\hss e\hss}}%
+\notes\qa l\en
+\znotes\en
+\zchar{16}{\hbox to4\elemskip{\downbracefill}}%
+\zchar{19}{\hbox to4\elemskip{\hss c\hss}}%
+\zchar{3}{\hbox to\elemskip{\upbracefill}\hbox to\elemskip{\upbracefill}%
+  \hbox to\elemskip{\upbracefill}\hbox to\elemskip{\upbracefill}}%
+\zchar{-1}{\hbox to\elemskip{\hss e\hss}\hbox to\elemskip{\hss e\hss}%
+  \hbox to\elemskip{\hss e\hss}\hbox to\elemskip{\hss e\hss}}%
+\NOtes\qa l\en
+\znotes\en
+\zchar{16}{\hbox to\beforeruleskip{\downbracefill}}%
+\zchar{19}{\hbox to\beforeruleskip{\hss d\hss}}%
+\setemptybar\endpiece
+\end{music}
+\begin{quote}\begin{tabular}{l@{~$\rightarrow$~}l}
+a&\keyindex{afterruleskip}\\
+b&\keyindex{notes}\verb| = \vnotes 2\elemskip|\\
+c&\keyindex{NOtes}\verb| = \vnotes 4\elemskip|\\
+d&\keyindex{beforeruleskip}\\
+e&\keyindex{elemskip}
+\end{tabular}\end{quote}
+
+\section{Moving from one staff or instrument to another}
+ \label{movingtostaffs}
+
+When entering notes inside \verb|\notes ... \en|, the usual way to suspend
+input for one instrument and start the next (higher) is with  the character
+``\verb|&|''\index{"&@{\tt\char'046}}. If the instrument has more than one
+staff, to switch to the next (higher) one you can use the character
+``\verb+|+''\index{\tt\char'174@{\tt\char'174}}.
+
+There are some alternate navigation commands that may be useful in
+ special situations. Due to ``catcode
+problems'' (see Section~\ref{catcodeprobs}) it may sometimes be necessary
+to use the more explicit commands
+\keyindex{nextinstrument} and \keyindex{nextstaff}, which have the same
+meanings as ``\verb|&|'' and ``\verb+|+'' respectively. To switch to the previous
+(next lower) staff of the same instrument, use \keyindex{prevstaff}. This might
+be useful if a beam starts in a higher staff than where it ends. More
+generally, to switch to an arbitrary instrument $n$, use
+\keyindex{selectinstrument}\onen, and to switch to an arbitrary staff $n$
+of the current instrument, use \keyindex{selectstaff}\verb|{|$n$\verb|}|. In the
+latter case if $n$ exceeds the number of staves defined for the instrument, you
+will receive an error message. You can enter part of a successive voice on
+the \ital{same} staff by using \verb|\selectstaff{|$n$\verb|}| with $n$ for
+the \ital{current} staff.
+
+
+\section{Automatic note spacing}
+\label{autosp}
+
+A preprocessor called \texttt{autosp}\index{autosp@{\tt autosp}} automates the generation 
+of note-spacing commands by converting (non-standard) commands
+of the form \verb|\anotes ... \en| into one or more conventional
+note-spacing commands, as determined by the note values
+themselves, with \verb|\sk| spacing commands inserted as necessary.
+The coding for an entire measure can be entered one part at
+a time, without concern for note-spacing changes within the
+part or spacing requirements of other parts.
+For example, from the input
+\begin{verbatim}
+  \anotes\qa J\qa K&\ca l\qa m\ca n\en
+\end{verbatim}
+\texttt{autosp} generates
+\begin{verbatim}
+  \Notes\qa J\sk\qa K\sk&\ca l\qa m\sk\ca n\en
+\end{verbatim}
+\texttt{autosp} also supports non-standard commands for adding ``global''
+skips (i.e., in every staff) and centered whole-bar rests.
+
+As an option, \emph{all} note-spacing commands (except \verb|\znotes|
+and \verb|\vnotes|) will be processed similarly; this is useful for correcting
+the spacing in single-instrument parts extracted from a multi-instrument score;
+see Section~\ref{musixtnt}.
+
+The \texttt{autosp} package is available in 
+\href{https://www.tug.org/texlive/}{\underline{TeXLive}} 
+and
+\href{http://miktex.org/}{\underline{MiKTeX}}, and
+can also be found at 
+the \href{http://icking-music-archive.org/software/autosp/autosp.zip}
+{\underline{Werner Icking Music Archive}}
+or at
+\href{http://mirrors.ctan.org/support/autosp.zip}{\underline{CTAN}}
+(the Comprehensive \TeX\ Archive Network).
+
