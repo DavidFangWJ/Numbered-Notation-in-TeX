@@ -1,0 +1,32 @@
+\contentsline {chapter}{前言}{iii}
+\contentsline {chapter}{目录}{iv}
+\contentsline {chapter}{\numberline {第一章\hspace {.3em}}MusiXT\kern -.1667em\lower .5ex\hbox {E}\kern -.125emX\spacefactor \@m {}及\textsf {musixjnp}简介}{1}
+\contentsline {section}{\numberline {1.1}音乐排版的特点}{1}
+\contentsline {subsection}{\numberline {1.1.1}音乐排版是二维的}{1}
+\contentsline {subsection}{\numberline {1.1.2}水平间距}{2}
+\contentsline {subsection}{\numberline {1.1.3}输入内容}{2}
+\contentsline {subsection}{\numberline {1.1.4}符杠及减时线}{3}
+\contentsline {subsection}{\numberline {1.1.5}输入文本}{3}
+\contentsline {section}{\numberline {1.2}乐谱示例}{3}
+\contentsline {section}{\numberline {1.3}三段系统}{4}
+\contentsline {subsection}{\numberline {1.3.1}简介}{4}
+\contentsline {subsection}{\numberline {1.3.2}例子}{4}
+\contentsline {subsection}{\numberline {1.3.3}手动改变布局}{6}
+\contentsline {subsection}{\numberline {1.3.4}\texttt {musixflx}的使用}{7}
+\contentsline {subsection}{\numberline {1.3.5}致新手：注意空格！}{8}
+\contentsline {section}{\numberline {1.4}其他}{8}
+\contentsline {subsection}{\numberline {1.4.1}从乐谱中提取声部}{8}
+\contentsline {subsection}{\numberline {1.4.2}乐谱及音符的大小}{8}
+\contentsline {chapter}{\numberline {第二章\hspace {.3em}}输入文档的格式}{9}
+\contentsline {section}{\numberline {2.1}MusiXT\kern -.1667em\lower .5ex\hbox {E}\kern -.125emX\spacefactor \@m {}的基本规定}{9}
+\contentsline {section}{\numberline {2.2}常用的设置命令}{9}
+\contentsline {subsection}{\numberline {2.2.1}全局乐谱尺寸}{9}
+\contentsline {subsection}{\numberline {2.2.2}乐器个数}{9}
+\contentsline {subsection}{\numberline {2.2.3}谱号}{9}
+\contentsline {subsection}{\numberline {2.2.4}节拍}{10}
+\contentsline {subsection}{\numberline {2.2.5}乐器名}{10}
+\contentsline {subsection}{\numberline {2.2.6}乐器组}{10}
+\contentsline {section}{\numberline {2.3}纯简谱谱表常用的设置}{10}
+\contentsline {chapter}{\numberline {第三章\hspace {.3em}}输入音符的预备工作}{11}
+\contentsline {section}{\numberline {3.1}谱表的水平间距}{11}
+\contentsline {subsection}{\numberline {3.1.1}音符间距}{11}

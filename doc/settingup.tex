@@ -1,0 +1,47 @@
+\chapter{输入文档的格式}
+\section{\musixtex 的基本规定}
+\musixtex 的输入文件和一般的\TeX 文件类似。使用\musixtex 宏包的命令是\verb|\input musixtex|；相应地，使用简谱宏包\musixjnp 的命令是\verb|\input musixjnp|。宏集内的其他宏包也如此调用。
+
+\musixtex\enspace 宏集默认乐谱最多有6个声部。如果需要更多的声部，可以使用\textsf{musixadd}\enspace 或\enspace\textsf{musixmad}\enspace 宏包扩展到9或12个。如果还需要更多声部，可以使用\penalty-10000\verb|\setmaxinstruments|、\hfill\verb|\setmaxgroups|、\hfill\verb|\setmaxslurs|、\hfill\verb|\setmaxtrills|、\penalty-10000\verb|\setmaxoctlines|等命令手动修改。
+
+
+\section{常用的设置命令}\label{whatspecify}
+
+\subsection{全局乐谱尺寸}
+\musixtex 设置了4种乐谱尺寸：小（16 pt）、中（20 pt，默认）、大（24 pt）、特大（29 pt）。或需要非默认尺寸，分别使用命令\ctrlseq{smallmusicsize}、\ctrlseq{largemusicsize}、\ctrlseq{Largemusicsize}。在使用该命令时，所有的音乐内容都会相应缩放。
+
+简谱推荐使用“小”尺寸；线简混排时参考第??章的内容。
+
+\subsection{乐器个数}
+命令\ctrlseq{instrumentnumber} $n$表示乐谱中乐器的个数，默认为1.
+
+\subsection{谱号}
+各谱表的默认谱号是高音谱号。修改谱号的命令为\ctrlseq{setclef}\verb|{|$n$\verb|}{|$s_1s_2s_3s_4\ldots$\verb|}|。$n$是乐器从下往上数的序号，$s_1$、$s_2$等是该乐器从下往上的谱表序号对应的谱号。
+
+简谱应当使用8（没有谱号）。
+
+\subsection{节拍}
+所有声部通用的节拍记号可以使用\ctrlseq{generalmeter}\verb|{|$m$\verb|}|命令。$m$是拍号相应的命令，简谱使用\ctrlseq{inijfrac}\verb|{|$a$\verb|}{|$b$\verb|}|（乐谱首）或\ctrlseq{jfrac}\verb|{|$a$\verb|}{|$b$\verb|}|（乐谱中切换拍号），a为上方的数，b为下方的数。
+
+若使某乐器的节拍与全局设置不同，则应该使用
+\ctrlseq{setmeter}\verb|{|$n$\verb|}{{|$m_1$\verb|}{|$m_2$\verb|}|\penalty-10000 \verb|{|$m_3$\verb|}{|$m_4$\verb|}}|，与谱表相似。
+
+\subsection{乐器名}
+乐器名使用\ctrlseq{setname}\verb|{|$n$\verb|}{|{\fangsong 乐器名}\verb|}|命令设置，程序会自动将乐器名称居中放置在\ctrlseq{parindent}宽度的范围内。
+
+\subsection{乐器组}\label{curlybrackets}
+默认情况下，乐器间没有连接。若需要排合唱谱（如上一章中的《喀秋莎》例谱），则需要方括号分组。插入方括号的命令是
+\begin{quote}
+\ctrlseq{songtop}\verb|{|$n$\verb|}|\\
+\ctrlseq{songbottom}\verb|{|$m$\verb|}|
+\end{quote}
+
+若需要多个方括号，则使用类似的\ctrlseq{grouptop}和\ctrlseq{groupbottom}命令。
+
+\section{纯简谱谱表常用的设置}
+除上述内容以外，简谱谱表还经常需要使用\ctrlseq{nostartrules}（取消每行左侧的连线）和\ctrlseq{sepbarrules}（每个乐器的小节线分开）两条命令。
+
+
+\endinput
+
+
